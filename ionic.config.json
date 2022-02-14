@@ -1,0 +1,7 @@
+{
+  "name": "notification-testing-i5vue",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
