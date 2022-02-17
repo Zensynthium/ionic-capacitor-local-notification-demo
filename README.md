@@ -1,0 +1,4 @@
+# Ionic Capacitor Local Notification Demo
+This is a repository that showcases how to use the Local Notification Plugin from Capacitor to schedule notifications for mobile. It can still be tested on web, but it seems the notifications only trigger for mobile, so this should be paired with a web based notification system for full cross-platform coverage if that's what you're seeking.
+
+The main code is hosted in the composables folder with localNotfication.js being the main file, and ISO8201DateWithTimeZone.js supporting it for compatibility with the ion-datetime component. It was set up to be modular as to easily integrate with any project.
