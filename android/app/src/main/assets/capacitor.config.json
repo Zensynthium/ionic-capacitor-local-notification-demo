@@ -1,0 +1,12 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "notification-testing-i5vue",
+	"webDir": "dist",
+	"bundledWebRuntime": false,
+	"plugins": {
+		"LocalNotifications": {
+			"smallIcon": "splash.png",
+			"iconColor": "#FFFFFF"
+		}
+	}
+}
