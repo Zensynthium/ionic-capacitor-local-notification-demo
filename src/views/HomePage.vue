@@ -12,7 +12,8 @@
           <ion-title size="large">Notification Testing</ion-title>
         </ion-toolbar>
       </ion-header>
-      <NotificationDemo></NotificationDemo>
+      <LocalNotificationDemo></LocalNotificationDemo>
+      <PushNotificationDemo></PushNotificationDemo>
     </ion-content>
   </ion-page>
 </template>
@@ -27,8 +28,8 @@ import {
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
-// import NotificationDemo from '@/components/NotificationDemo.vue'
-import NotificationDemo from '@/components/ModularNotificationsDemo.vue'
+import LocalNotificationDemo from '@/components/LocalNotificationsDemo.vue'
+import PushNotificationDemo from '@/components/PushNotificationsDemo.vue'
 
 export default defineComponent({
   name: 'HomePage',
@@ -38,7 +39,8 @@ export default defineComponent({
     IonPage,
     IonTitle,
     IonToolbar,
-    NotificationDemo,
+    LocalNotificationDemo,
+    PushNotificationDemo,
   }
 });
 </script>

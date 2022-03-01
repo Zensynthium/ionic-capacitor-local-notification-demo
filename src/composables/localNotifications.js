@@ -83,6 +83,13 @@ export default function() {
       const currentPending = await LocalNotifications.getPending()
       pending.notifications = currentPending.notifications
     }
+    
+    const scheduleNotification = async (notifOption) => {
+      await LocalNotifications.schedule(notifOption)
+      await updatePending()
+      
+      handleToast(`Notification scheduled!`)
+    }
 
     const scheduleNotifications = async (notifOptions) => {
       if (notifOptions.notifications.length) {
@@ -149,7 +156,8 @@ export default function() {
       pending,
       addNotifications,
       removeAllNotifications,
-      scheduleNotifications, 
+      scheduleNotifications,
+      scheduleNotification, 
       cancelNotifications,
       cancelNotification
     }

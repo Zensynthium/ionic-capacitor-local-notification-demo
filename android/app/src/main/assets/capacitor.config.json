@@ -7,6 +7,13 @@
 		"LocalNotifications": {
 			"smallIcon": "splash.png",
 			"iconColor": "#FFFFFF"
+		},
+		"PushNotifications": {
+			"presentationOptions": [
+				"badge",
+				"sound",
+				"alert"
+			]
 		}
 	}
 }

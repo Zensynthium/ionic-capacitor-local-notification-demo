@@ -60,10 +60,10 @@ import {
   IonLabel,
 } from '@ionic/vue';
 
-import nativeNotifications from '@/composables/localNotifications'
+import nativeLocalNotifications from '@/composables/localNotifications'
 
 export default defineComponent({
-  name: "NotificationDemo",
+  name: "LocalNotifications",
   components: {
     IonItem,
     IonButton,
@@ -84,7 +84,7 @@ export default defineComponent({
       scheduleNotifications,
       cancelNotifications,
       cancelNotification
-    } = nativeNotifications()
+    } = nativeLocalNotifications()
 
     return {
       checkPlatform,
