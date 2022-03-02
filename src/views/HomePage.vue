@@ -39,6 +39,7 @@ export default defineComponent({
     IonPage,
     IonTitle,
     IonToolbar,
+    
     LocalNotificationDemo,
     PushNotificationDemo,
   }

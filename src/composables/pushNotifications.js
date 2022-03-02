@@ -3,6 +3,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
 
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+// import { Http } from '@capacitor-community/http';
 
 export default function() {
   const registrationToken = ref()
@@ -58,12 +59,57 @@ export default function() {
         body: 'Hello from your native device!'
       }
     }
+    
+    const nativeOriginUrl = ref('')
 
-    axios.post('https://localhost:3000/firebase/notification', pushNotification).then(res => {
+    if (Capacitor.getPlatform() == 'android') {
+      nativeOriginUrl.value = 'http://localhost'
+    } else if (Capacitor.getPlatform() == 'ios') {
+      nativeOriginUrl.value = 'capacitor://localhost'
+    } else if (Capacitor.getPlatform() == 'web') {
+      if (process.env.NODE_ENV === 'production') {
+      // nativeOriginUrl.value = process.env.VUE_APP_CLIENT_URL
+      } else {
+        // Default port is 8080
+        nativeOriginUrl.value = `http://localhost:${location.port}`
+      }
+    }
+ 
+    console.log('Origin: ' + nativeOriginUrl.value)
+
+    // Access-Control-Allow-Origin is mandatory as this is a "Complex" request. This must match the "origin" in the CorsOptions in the backend, or it will fail the preflight.
+    const headerOptions = {
+      headers: { "Access-Control-Allow-Origin": nativeOriginUrl.value }
+    }
+
+    const proxyUrl = 'https://zen-proxy.herokuapp.com/'
+    const apiUrl = 'https://push-notification-test-server.herokuapp.com'
+    
+    const payload = {
+      registrationToken: registrationToken.value, 
+      message: pushNotification
+    }
+
+    axios.post(`${proxyUrl}/${apiUrl}/firebase/notification`, payload, headerOptions).then(res => {
       console.log(res.data)
     }).catch(error => {
       console.log(error)
     })
+
+    // Example of a POST request. Note: data
+    // can be passed as a raw JS Object (must be JSON serializable)
+    // const options = {
+    //   url: `${apiUrl}/firebase/notification`,
+    //   headers: { "Access-Control-Allow-Origin": nativeOriginUrl.value },
+    //   data: { 
+    //     registrationToken: registrationToken.value, 
+    //     message: pushNotification
+    //   },
+    // }
+  
+    // const response = await Http.post(options);
+
+    // console.log(response)
   }
 
   onMounted(async () => {

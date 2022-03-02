@@ -1,6 +1,6 @@
 <template>
   <div class="ion-padding">
-    <h1>Notify Component</h1>
+    <h1><u>Local Notification Component</u></h1>
     <ion-item>
       <p>Notify Permission: {{ permissionState.display }}</p>
     </ion-item>
@@ -110,4 +110,8 @@ export default defineComponent({
 .d-block {
   display: block;
 }
+
+h2 {
+  font-size: 20px;
+} 
 </style>
