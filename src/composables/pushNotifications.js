@@ -1,11 +1,24 @@
 import { Capacitor } from '@capacitor/core';
 import { PushNotifications } from '@capacitor/push-notifications';
+import { LocalNotifications } from '@capacitor/local-notifications';
+
+import { toastController } from '@ionic/vue';
 
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-// import { Http } from '@capacitor-community/http';
 
 export default function() {
+  const handleToast = (message, isError = false, inAppNotification = false) => {
+    toastController
+      .create({
+        message: message,
+        position: "top",
+        color: isError ? "danger" : inAppNotification ? "light" : "primary",
+        duration: 2000,
+      })
+      .then((t) => t.present());
+  };
+
   const registrationToken = ref()
 
   const addPushListeners = async () => {
@@ -18,11 +31,25 @@ export default function() {
       console.error('Registration error: ', err.error);
     });
 
-    // TODO: Push Notifications aren't received if the app is open (at least on android) so they should probably be displayed in app for full coverage
     await PushNotifications.addListener('pushNotificationReceived', notification => {
       // Notification Definition
       
-        console.log('Push notification received: ', JSON.stringify(notification));
+      console.log('Push notification received: ', JSON.stringify(notification));
+
+      // Push notifications when in the foreground don't get triggered, so they must be handled by in-app logic. Local Notifications on android also don't have a display, so we create one.
+      if (Capacitor.getPlatform() == 'android') {
+        handleToast(`${notification.title}${notification.title && notification.body ? ' - ' : ''}${notification.body}`, false, true)
+      }
+
+      LocalNotifications.schedule({
+        notifications: [
+          {
+            title: notification.title,
+            body: notification.body,
+            id: dynamicId.value,
+          }
+        ]
+      })
     });
 
     await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
@@ -67,7 +94,7 @@ export default function() {
     const apiUrl = process.env.VUE_APP_API_URL
     
     // Notifications must be in the format or else silent notifications will be sent
-    
+
     const pushNotification = {
       notification: {
         title: 'Push Notification Test',
@@ -90,21 +117,6 @@ export default function() {
     }).catch(error => {
       console.log(error)
     })
-
-    // Example of a POST request. Note: data
-    // can be passed as a raw JS Object (must be JSON serializable)
-    // const options = {
-    //   url: `${apiUrl}/firebase/notification`,
-    //   headers: { "Access-Control-Allow-Origin": nativeOriginUrl.value },
-    //   data: { 
-    //     registrationToken: registrationToken.value, 
-    //     message: pushNotification
-    //   },
-    // }
-  
-    // const response = await Http.post(options);
-
-    // console.log(response)
   }
 
   onMounted(async () => {
