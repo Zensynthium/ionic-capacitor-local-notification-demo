@@ -51,14 +51,6 @@ export default function() {
 
   const sendPushNotification = async () => {
     // Push Notifications are sent by making POST Requests to the server, and then are sent out to all relevant devices from there
-
-    // Notifications must be in the format or else silent notifications will be sent
-    const pushNotification = {
-      notification: {
-        title: 'Push Notification Test',
-        body: 'Hello from your native device!'
-      }
-    }
     
     const nativeOriginUrl = ref('')
 
@@ -67,27 +59,30 @@ export default function() {
     } else if (Capacitor.getPlatform() == 'ios') {
       nativeOriginUrl.value = 'capacitor://localhost'
     } else if (Capacitor.getPlatform() == 'web') {
-      if (process.env.NODE_ENV === 'production') {
-      // nativeOriginUrl.value = process.env.VUE_APP_CLIENT_URL
-      } else {
-        // Default port is 8080
-        nativeOriginUrl.value = `http://localhost:${location.port}`
+      // If this gives an issue, replace with environment variable/hard code a value
+      nativeOriginUrl.value = window.location.origin
+    }
+
+    const proxyUrl = process.env.VUE_APP_PROXY_URL
+    const apiUrl = process.env.VUE_APP_API_URL
+    
+    // Notifications must be in the format or else silent notifications will be sent
+    
+    const pushNotification = {
+      notification: {
+        title: 'Push Notification Test',
+        body: 'Hello from your native device!'
       }
     }
- 
-    console.log('Origin: ' + nativeOriginUrl.value)
+
+    const payload = {
+      registrationToken: registrationToken.value, 
+      message: pushNotification
+    }
 
     // Access-Control-Allow-Origin is mandatory as this is a "Complex" request. This must match the "origin" in the CorsOptions in the backend, or it will fail the preflight.
     const headerOptions = {
       headers: { "Access-Control-Allow-Origin": nativeOriginUrl.value }
-    }
-
-    const proxyUrl = 'https://zen-proxy.herokuapp.com/'
-    const apiUrl = 'https://push-notification-test-server.herokuapp.com'
-    
-    const payload = {
-      registrationToken: registrationToken.value, 
-      message: pushNotification
     }
 
     axios.post(`${proxyUrl}/${apiUrl}/firebase/notification`, payload, headerOptions).then(res => {
