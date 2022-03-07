@@ -11,26 +11,26 @@
     <h2>Create Notification</h2>
     <ion-item>
       <ion-label>Title: </ion-label>
-      <ion-input name="title" placeholder="Title" v-model="notificationToAdd.title"></ion-input>
+      <ion-input name="localTitle" placeholder="Title" v-model="localNotificationToAdd.title"></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label>Body: </ion-label>
-      <ion-input name="body" placeholder="Body" v-model="notificationToAdd.body"></ion-input>
+      <ion-input name="localBody" placeholder="Body" v-model="localNotificationToAdd.body"></ion-input>
     </ion-item>
 
     <ion-item>
       <!-- <ion-label>Date/Time</ion-label> -->
-      <ion-datetime name="date" v-model="notificationToAdd.schedule.at"></ion-datetime>
+      <ion-datetime name="date" v-model="localNotificationToAdd.schedule.at"></ion-datetime>
     </ion-item>
     
     <ion-item>
       <ion-label>Enable in Foreground: </ion-label>
-      <ion-toggle name="foreground" v-model="notificationToAdd.foreground" :checked="notificationToAdd.foreground === true"></ion-toggle>
+      <ion-toggle name="foreground" v-model="localNotificationToAdd.foreground" :checked="localNotificationToAdd.foreground === true"></ion-toggle>
     </ion-item>
-    <!-- <ion-input name="iconColor" :value="notificationToAdd.iconColor"></ion-input> -->
+    <!-- <ion-input name="iconColor" :value="localNotificationToAdd.iconColor"></ion-input> -->
     <!-- Creates a shallow copy not have reactivity transferred -->
-    <ion-button class="d-inline" color="primary" @click="addNotifications({ ...notificationToAdd})">Add Notifications</ion-button>
+    <ion-button class="d-inline" color="primary" @click="addNotifications({ ...localNotificationToAdd})">Add Notifications</ion-button>
     <ion-button class="d-line" color="danger" @click="removeAllNotifications()">Remove All Notifications</ion-button>
     <ion-button class="d-inline" color="primary" @click="scheduleNotifications(options)">Start Notifications</ion-button>
     <ion-button class="d-inline" color="danger" @click="cancelNotifications()">Cancel Notifications</ion-button>
@@ -77,7 +77,7 @@ export default defineComponent({
       checkPlatform,
       permissionState,
       options,
-      notificationToAdd,
+      localNotificationToAdd,
       pending,
       addNotifications,
       removeAllNotifications,
@@ -90,7 +90,7 @@ export default defineComponent({
       checkPlatform,
       permissionState,
       options,
-      notificationToAdd,
+      localNotificationToAdd,
       pending,
       addNotifications,
       removeAllNotifications,

@@ -4,7 +4,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 
 import { toastController } from '@ionic/vue';
 
-import { ref, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import axios from 'axios';
 
 export default function() {
@@ -21,6 +21,11 @@ export default function() {
 
   const registrationToken = ref()
 
+  const pushNotificationToAdd = reactive({
+    title: '',
+    body: '',
+  })
+
   const addPushListeners = async () => {
     await PushNotifications.addListener('registration', token => {
       registrationToken.value = token.value
@@ -31,7 +36,7 @@ export default function() {
       console.error('Registration error: ', err.error);
     });
 
-    await PushNotifications.addListener('pushNotificationReceived', notification => {
+    await PushNotifications.addListener('pushNotificationReceived', async notification => {
       // Notification Definition
       
       console.log('Push notification received: ', JSON.stringify(notification));
@@ -41,14 +46,18 @@ export default function() {
         handleToast(`${notification.title}${notification.title && notification.body ? ' - ' : ''}${notification.body}`, false, true)
       }
 
-      LocalNotifications.schedule({
-        notifications: [
-          {
-            title: notification.title,
-            body: notification.body,
-            id: dynamicId.value,
-          }
-        ]
+      // TODO: Come up with a alphanumeric -> numeric conversion with no possible collisions
+      // Converting an alphanumeric into a numeric. There are possible collisions here, but they're quite unlikely. 
+      // In the event of a collision, another notification may be overwritten. 
+      const convertedId = notification.id.split('').reduce((prev, next) => prev + next.charCodeAt(0))
+
+      await LocalNotifications.schedule({
+        notifications: [{
+          id: convertedId,
+          title: notification.title,
+          body: notification.body,
+          foreground: true,
+        }]
       })
     });
 
@@ -76,47 +85,51 @@ export default function() {
     console.log('delivered notifications', JSON.stringify(notificationList));
   }
 
-  const sendPushNotification = async () => {
+  const sendPushNotification = (notificationToSend) => {
     // Push Notifications are sent by making POST Requests to the server, and then are sent out to all relevant devices from there
     
-    const nativeOriginUrl = ref('')
+      const nativeOriginUrl = ref('')
 
-    if (Capacitor.getPlatform() == 'android') {
-      nativeOriginUrl.value = 'http://localhost'
-    } else if (Capacitor.getPlatform() == 'ios') {
-      nativeOriginUrl.value = 'capacitor://localhost'
-    } else if (Capacitor.getPlatform() == 'web') {
-      // If this gives an issue, replace with environment variable/hard code a value
-      nativeOriginUrl.value = window.location.origin
-    }
-
-    const proxyUrl = process.env.VUE_APP_PROXY_URL
-    const apiUrl = process.env.VUE_APP_API_URL
-    
-    // Notifications must be in the format or else silent notifications will be sent
-
-    const pushNotification = {
-      notification: {
-        title: 'Push Notification Test',
-        body: 'Hello from your native device!'
+      if (Capacitor.getPlatform() == 'android') {
+        nativeOriginUrl.value = 'http://localhost'
+      } else if (Capacitor.getPlatform() == 'ios') {
+        nativeOriginUrl.value = 'capacitor://localhost'
+      } else if (Capacitor.getPlatform() == 'web') {
+        // If this gives an issue, replace with environment variable/hard code a value
+        nativeOriginUrl.value = window.location.origin
       }
-    }
 
-    const payload = {
-      registrationToken: registrationToken.value, 
-      message: pushNotification
-    }
+      const proxyUrl = process.env.VUE_APP_PROXY_URL
+      const apiUrl = process.env.VUE_APP_API_URL
+      
+      console.log('notificationToSend: ' + JSON.stringify(notificationToSend))
 
-    // Access-Control-Allow-Origin is mandatory as this is a "Complex" request. This must match the "origin" in the CorsOptions in the backend, or it will fail the preflight.
-    const headerOptions = {
-      headers: { "Access-Control-Allow-Origin": nativeOriginUrl.value }
-    }
+      const pushTitle = notificationToSend.title
+      const pushBody = notificationToSend.body
 
-    axios.post(`${proxyUrl}/${apiUrl}/firebase/notification`, payload, headerOptions).then(res => {
-      console.log(res.data)
-    }).catch(error => {
-      console.log(error)
-    })
+      // Notifications must be in the format or else silent notifications will be sent
+      const pushNotification = {  
+        notification: {
+          title: pushTitle,
+          body: pushBody,
+        }
+      }
+
+      const payload = {
+        registrationToken: registrationToken.value, 
+        message: pushNotification
+      }
+
+      // Access-Control-Allow-Origin is mandatory as this is a "Complex" request. This must match the "origin" in the CorsOptions in the backend, or it will fail the preflight.
+      const headerOptions = {
+        headers: { "Access-Control-Allow-Origin": nativeOriginUrl.value }
+      }
+
+      axios.post(`${proxyUrl}/${apiUrl}/firebase/notification`, payload, headerOptions).then(res => {
+        console.log(res.data)
+      }).catch(error => {
+        console.log(error)
+      })
   }
 
   onMounted(async () => {
@@ -135,6 +148,7 @@ export default function() {
   
   return {
     registrationToken,
+    pushNotificationToAdd,
     getDeliveredPushNotifications,
     sendPushNotification
   }

@@ -12,10 +12,8 @@ When using Ionic/Capacitor, the default origins are capacitor://localhost (iOS) 
 
 See https://ionicframework.com/docs/troubleshooting/cors for more information on CORS in relation to Ionic/Capacitor
 
-https://www.npmjs.com/package/cors-anywhere
-
 https://capacitorjs.com/docs/apis/push-notifications
 ### Proxy Server Setup
-
+https://www.npmjs.com/package/cors-anywhere
 ### Push Notification Server Setup
 

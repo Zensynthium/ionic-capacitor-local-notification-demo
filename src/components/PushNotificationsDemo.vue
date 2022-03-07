@@ -8,48 +8,71 @@
       <ion-label>Registration Token: {{ registrationToken }}</ion-label>
       <!--  -->
     </ion-item>
-    <h2>Location Information</h2>
+
+    <h2>Create Notification</h2>
+    <ion-item>
+      <ion-label>Title: </ion-label>
+      <ion-input name="pushTitle" placeholder="Title" v-model="pushNotificationToAdd.title"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Body: </ion-label>
+      <ion-input name="pushBody" placeholder="Body" v-model="pushNotificationToAdd.body"></ion-input>
+    </ion-item>
+
+    <!-- Location information for verifying origin information on android/ios. This was for testing and can be deleted -->
+    <!-- <h2>Location Information</h2>
     <ion-item class="d-flex flex-column">
       
       <ion-list v-for="(value, name) in currentLocation" :key="value">
         <ion-label class="d-block"> <b>{{ name }}:</b> {{ value }} </ion-label>
       </ion-list>
-    </ion-item>
+    </ion-item> -->
 
-    <ion-item>
-      <ion-button @click="sendPushNotification()">Send Push Notification</ion-button>
-    </ion-item>
+    <ion-button @click="sendPushNotification({ ...pushNotificationToAdd })">Send Push Notification</ion-button>
   </div>
 </template>
 
 <script>
-import nativePushNotifications from '@/composables/pushNotifications'
+import { defineComponent } from 'vue';
 
 import { 
   IonButton, 
   IonItem,
   IonLabel,
-  IonList, 
+  // IonList, 
 } from '@ionic/vue';
 
-export default {
+import nativePushNotifications from '@/composables/pushNotifications'
+
+export default defineComponent({
   name: "PushNotifications",
   components: {
     IonButton, 
     IonItem,
     IonLabel,
-    IonList,
+    // IonList,
   },
   setup() {
-    // const currentPort = location.port
-    const currentLocation = window.location
-    console.log(currentLocation)
+    // const currentLocation = window.location
+    // console.log(JSON.stringify(currentLocation))
 
-    const { registrationToken, getDeliveredPushNotifications, sendPushNotification } = nativePushNotifications()
+    const { 
+      registrationToken, 
+      pushNotificationToAdd, 
+      getDeliveredPushNotifications, 
+      sendPushNotification 
+    } = nativePushNotifications()
 
-    return { registrationToken, sendPushNotification, currentLocation }
+    return { 
+      registrationToken, 
+      pushNotificationToAdd,
+      getDeliveredPushNotifications,
+      sendPushNotification, 
+      // currentLocation,
+    }
   }
-}
+})
 </script>
 
 <style>

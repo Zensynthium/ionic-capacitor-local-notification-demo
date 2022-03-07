@@ -13,6 +13,7 @@ export default function() {
       return Capacitor.getPlatform()
     }
 
+    // Toasts can be disabled/commented out in production environment, but they're helpful for testing purposes
     const handleToast = (message, isError = false) => {
       toastController
         .create({
@@ -28,7 +29,7 @@ export default function() {
 
     // Choose all the fields relevant to the type of notifications desired.
     // https://capacitorjs.com/docs/apis/local-notifications#localnotificationschema
-    const notificationToAdd = reactive({
+    const localNotificationToAdd = reactive({
       id: dynamicId.value,
       title: '',
       body: '',
@@ -62,7 +63,7 @@ export default function() {
         options.notifications.push(newNotification)
 
         dynamicId.value += 1
-        notificationToAdd.id = dynamicId.value
+        localNotificationToAdd.id = dynamicId.value
 
         handleToast('Notification added!')
       } else {
@@ -152,7 +153,7 @@ export default function() {
       checkPlatform, 
       permissionState, 
       options,
-      notificationToAdd, 
+      localNotificationToAdd, 
       pending,
       addNotifications,
       removeAllNotifications,
