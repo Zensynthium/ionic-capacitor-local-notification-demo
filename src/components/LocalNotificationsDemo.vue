@@ -28,10 +28,9 @@
       <ion-label>Enable in Foreground: </ion-label>
       <ion-toggle name="foreground" v-model="localNotificationToAdd.foreground" :checked="localNotificationToAdd.foreground === true"></ion-toggle>
     </ion-item>
-    <!-- <ion-input name="iconColor" :value="localNotificationToAdd.iconColor"></ion-input> -->
-    <!-- Creates a shallow copy not have reactivity transferred -->
+    <!-- Creates a shallow copy to not have reactivity transferred -->
     <ion-button class="d-inline" color="primary" @click="addNotifications({ ...localNotificationToAdd})">Add Notifications</ion-button>
-    <ion-button class="d-line" color="danger" @click="removeAllNotifications()">Remove All Notifications</ion-button>
+    <ion-button class="d-inline" color="danger" @click="removeAllNotifications()">Remove All Notifications</ion-button>
     <ion-button class="d-inline" color="primary" @click="scheduleNotifications(options)">Start Notifications</ion-button>
     <ion-button class="d-inline" color="danger" @click="cancelNotifications()">Cancel Notifications</ion-button>
     <ion-button class="d-inline" color="danger" @click="cancelNotification(0)">Cancel Notification ID:0</ion-button>

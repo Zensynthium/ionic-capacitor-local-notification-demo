@@ -3,8 +3,8 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { LocalNotifications } from '@capacitor/local-notifications';
 
 import { toastController } from '@ionic/vue';
-
 import { ref, reactive, onMounted } from 'vue';
+
 import axios from 'axios';
 
 export default function() {
@@ -48,12 +48,14 @@ export default function() {
 
       // TODO: Come up with a alphanumeric -> numeric conversion with no possible collisions
       // Converting an alphanumeric into a numeric. There are possible collisions here, but they're quite unlikely. 
-      // In the event of a collision, another notification may be overwritten. 
-      const convertedId = notification.id.split('').reduce((prev, next) => prev + next.charCodeAt(0))
+      // In the event of a collision, another notification may be overwritten and be missed by the recipient.
+      // const convertedId = notification.id.split('').reduce((prev, next) => prev + next.charCodeAt(0))
 
       await LocalNotifications.schedule({
         notifications: [{
-          id: convertedId,
+          // Though the same notification may fill up multiple slots by the same notification getting different ids, at least the ids are unique and there are no collisions.
+          id: new Date().getTime(),
+          // id: convertedId,
           title: notification.title,
           body: notification.body,
           foreground: true,
@@ -85,7 +87,7 @@ export default function() {
     console.log('delivered notifications', JSON.stringify(notificationList));
   }
 
-  const sendPushNotification = (notificationToSend) => {
+  const sendPushNotification = () => {
     // Push Notifications are sent by making POST Requests to the server, and then are sent out to all relevant devices from there
     
       const nativeOriginUrl = ref('')
@@ -99,19 +101,15 @@ export default function() {
         nativeOriginUrl.value = window.location.origin
       }
 
+      // Proxy is neccessary as native environments like Android/Ios don't use the https protocol and are denied by CORS to API's that don't completely relax it.
       const proxyUrl = process.env.VUE_APP_PROXY_URL
       const apiUrl = process.env.VUE_APP_API_URL
       
-      console.log('notificationToSend: ' + JSON.stringify(notificationToSend))
-
-      const pushTitle = notificationToSend.title
-      const pushBody = notificationToSend.body
-
       // Notifications must be in the format or else silent notifications will be sent
       const pushNotification = {  
         notification: {
-          title: pushTitle,
-          body: pushBody,
+          title: pushNotificationToAdd.title,
+          body: pushNotificationToAdd.body,
         }
       }
 

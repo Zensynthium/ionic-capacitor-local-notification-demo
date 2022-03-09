@@ -19,7 +19,7 @@
       <ion-label>Body: </ion-label>
       <ion-input name="pushBody" placeholder="Body" v-model="pushNotificationToAdd.body"></ion-input>
     </ion-item>
-
+    
     <!-- Location information for verifying origin information on android/ios. This was for testing and can be deleted -->
     <!-- <h2>Location Information</h2>
     <ion-item class="d-flex flex-column">
@@ -39,6 +39,7 @@ import { defineComponent } from 'vue';
 import { 
   IonButton, 
   IonItem,
+  IonInput,
   IonLabel,
   // IonList, 
 } from '@ionic/vue';
@@ -50,12 +51,14 @@ export default defineComponent({
   components: {
     IonButton, 
     IonItem,
+    IonInput,
     IonLabel,
     // IonList,
   },
   setup() {
     // const currentLocation = window.location
     // console.log(JSON.stringify(currentLocation))
+
 
     const { 
       registrationToken, 
