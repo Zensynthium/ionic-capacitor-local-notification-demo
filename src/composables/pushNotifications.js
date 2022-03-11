@@ -42,7 +42,7 @@ export default function() {
       console.log('Push notification received: ', JSON.stringify(notification));
 
       // Push notifications when in the foreground don't get triggered, so they must be handled by in-app logic. Local Notifications on android also don't have a display, so we create one.
-      if (Capacitor.getPlatform() == 'android') {
+      if (Capacitor.getPlatform() == 'android' || Capacitor.getPlatform() == 'ios') {
         handleToast(`${notification.title}${notification.title && notification.body ? ' - ' : ''}${notification.body}`, false, true)
       }
 
